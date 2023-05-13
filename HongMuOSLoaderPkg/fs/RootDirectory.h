@@ -1,3 +1,3 @@
+#include <Protocol/BlockIo.h>
 typedef struct {
-	EFI_BL
 } RootDirectory;

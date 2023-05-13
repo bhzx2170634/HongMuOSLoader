@@ -4,14 +4,14 @@
 
 EFI_STATUS EFIAPI UefiMain(
 		IN EFI_HANDLE ImageHandle,
-		IN EFI_STSTEM_TABLE* SystemTable
+		IN EFI_SYSTEM_TABLE* SystemTable
 ){
 	EFI_STATUS status = EFI_SUCCESS;
 	EFI_BOOT_SERVICES* gBS = SystemTable->BootServices;
-	UINTN NoHandle = 0
-		EFI_HANDLE* GraphicsProtocol;
-	status = gBS->LocatetHandleBuffer(
-			ByProTocol,
+	UINTN NoHandle = 0;
+	EFI_HANDLE* GraphicsProtocol;
+	status = gBS->LocateHandleBuffer(
+			ByProtocol,
 			&gEfiGraphicsOutputProtocolGuid,
 			NULL,
 			&NoHandle,
@@ -23,10 +23,11 @@ EFI_STATUS EFIAPI UefiMain(
 		return status;
 	}
 	EFI_GRAPHICS_OUTPUT_PROTOCOL* GOP;
-	status = gBS->OpenProtocl(
+	status = gBS->OpenProtocol(
 		GraphicsProtocol[1],
 		&gEfiGraphicsOutputProtocolGuid,
 		(void**) &GOP,
+		ImageHandle,
 		NULL,
 		EFI_OPEN_PROTOCOL_GET_PROTOCOL
 	);
