@@ -51,3 +51,57 @@ GetFileHandle(EFI_HANDLE ImageHandle,CHAR16* FilePath,EFI_FILE_PROTOCOL** FileHa
 	}
 	return status;
 }
+
+EFI_STATUS ReadFile(
+	EFI_FILE_PROTOCOL* file,
+	EFI_PHYSICAL_ADDRESS* FileBase
+)
+{
+	EFI_STATUS status = EFI_SUCCESS;
+	EFI_FILE_INFO* FileInfo;
+	UINTN InfoSize = sizeof(EFI_FILE_INFO) + 128;
+	status = gBS->AllocatePool(
+		EfiLoaderData,
+		InfoSize,
+		(void**) &FileInfo
+	);
+	if(EFI_ERROR(status)){
+		Print(L"Allocate pool failed");
+		return status;
+	}
+	status = file->GetInfo(
+		file,
+		&gEfiFileInfoGuid,
+		&InfoSize,
+		(void**) &FileInfo
+	);
+	if(EFI_ERROR(status))
+	{
+		Print(L"Can't get info of file");
+		return status;
+	}
+	UINTN FilePages = (FileInfo->FileSize >> 12) + 1;
+	status = gBS->AllocatePages(
+		AllocateAnyPages,
+		EfiLoaderData,
+		FilePages,
+		FileBase
+	);
+	if(EFI_ERROR(status))
+	{
+		Print(L"Can't allocate pages");
+		return status;
+	}
+	status = file->Read(
+		file,
+		FileInfo->FileSize,
+		&FileBase
+	);
+	if(EFI_ERROR(status))
+	{
+		Print(L"Read failed");
+		return status;
+	}
+	gBS->FreePool(FileInfo);
+	return status;
+}
