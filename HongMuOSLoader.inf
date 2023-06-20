@@ -1,0 +1,19 @@
+[Defines]
+	INF_VERSION = 0x00010006
+	BASE_NAME = HongMuOSLoader
+	FILE_GUID = 2dae7a0c-3089-410a-9e02-a3a10b1e02c0
+	VERSION_STRING = 0.1
+	ENTRY_POINT = UefiMain
+
+[Sources]
+	main.c
+	elf.c
+	Graphics/Graphics.c
+	FileIO/file.c
+
+[Packages]
+	MdePkg/MdePkg.dec
+
+[LibrarayClasses]
+	UefiApplicationEntryPoint
+	UefiLib

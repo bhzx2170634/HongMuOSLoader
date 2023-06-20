@@ -26,13 +26,14 @@ GetFileHandle(EFI_HANDLE ImageHandle,CHAR16* FilePath,EFI_FILE_PROTOCOL** FileHa
 		NULL,
 		EFI_OPEN_PROTOCOL_GET_PROTOCOL
 	);
+	gBS->FreePool(HandleBuffer);
 	if(EFI_ERROR(status)){
 		Print(L"Can't open protocol");
 		return status;
 	}
 	EFI_FILE_PROTOCOL* Root;
 	status = FileSystem->OpenVolume(FileSystem,&Root);
-	if (EFI_ERROT(status))
+	if (EFI_ERROR(status))
 	{
 		Print(L"Can't open volume");
 		return status;
@@ -44,6 +45,12 @@ GetFileHandle(EFI_HANDLE ImageHandle,CHAR16* FilePath,EFI_FILE_PROTOCOL** FileHa
 		EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
 		EFI_OPEN_PROTOCOL_GET_PROTOCOL
 	);
+	Root->Close(Root);
+	gBS->CloseProtocol(
+		FileSystem,
+		&gEfiSimpleFileSystemProtocolGuid,
+		ImageHandle,
+		NULL);
 	if (EFI_ERROR(status))
 	{
 		Print(L"Can't open files");
@@ -94,7 +101,7 @@ EFI_STATUS ReadFile(
 	}
 	status = file->Read(
 		file,
-		FileInfo->FileSize,
+		&FileInfo->FileSize,
 		&FileBase
 	);
 	if(EFI_ERROR(status))

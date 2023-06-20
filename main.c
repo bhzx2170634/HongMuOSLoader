@@ -1,6 +1,7 @@
 #include <Uefi.h>
 #include <Library/UefiLib.h>
 #include "Graphics/Graphics.h"
+#include "elf.h"
 
 EFI_STATUS EFIAPI UefiMain(
 		IN EFI_HANDLE ImageHandle,
@@ -32,5 +33,7 @@ EFI_STATUS EFIAPI UefiMain(
 		EFI_OPEN_PROTOCOL_GET_PROTOCOL
 	);
 	status = SetDefinition(GOP,1080,1920);
+	Contra_Table table;
+	enter_core(ImageHandle,SystemTable,table);
 	return status;
 }
