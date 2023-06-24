@@ -1,0 +1,1 @@
+EFI_GUID CreateGuid();
